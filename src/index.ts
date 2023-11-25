@@ -2,32 +2,38 @@ import { ApolloServer } from "@apollo/server";
 import { startStandaloneServer } from "@apollo/server/standalone";
 
 const typeDefs = ` #graphql
-  type Book {
-    title: String
-    author: String
-  }
-
-  type Query {
-    books: [Book]
-  }
+    type User {
+        id: ID
+        username: String
+    }
+    type Tweet {
+        id: ID
+        text: String
+        author: User
+    }
+    type Query {
+        allTweets: [Tweet]
+        tweet(id: ID): Tweet
+    }
+    type Mutation {
+      postTweet(text: String, userId: ID): Tweet
+      deleteTweet(id:ID): Boolean
+    }
 `;
-
-const books = [
+const allTweets = [
   {
-    title: "The Awakening",
-    author: "Kate Chopin",
+    id: "qwer123",
+    text: "아 심심하다",
   },
   {
-    title: "City of Glass",
-    author: "Paul Auster",
+    id: "min5950",
+    text: "추우니까 더 졸리네",
   },
 ];
 
-// Resolvers define how to fetch the types defined in your schema.
-// This resolver retrieves books from the "books" array above.
 const resolvers = {
   Query: {
-    books: () => books,
+    allTweets: () => allTweets,
   },
 };
 
