@@ -11,24 +11,24 @@ const typeDefs = ` #graphql
     type Tweet {
         id: ID
         text: String!
-        author: User!
+        author: User
     }
     type Query {
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
     }
     type Mutation {
-      postTweet(text: String!, userId: ID!!): Tweet
+      postTweet(text: String!, userId: ID!): Tweet
       deleteTweet(id:ID!): Boolean!
     }
 `;
 const allTweets = [
   {
-    id: "qwer123",
+    id: "1",
     text: "아 심심하다",
   },
   {
-    id: "min5950",
+    id: "2",
     text: "추우니까 더 졸리네",
   },
 ];
@@ -36,6 +36,19 @@ const allTweets = [
 const resolvers = {
   Query: {
     allTweets: () => allTweets,
+    tweet(root, { id }) {
+      return allTweets.find((tweet) => tweet.id === id);
+    },
+  },
+  Mutation: {
+    postTweet(_, { text, userId }) {
+      const newTweet = {
+        id: String(allTweets.length + 1),
+        text,
+      };
+      allTweets.push(newTweet);
+      return newTweet;
+    },
   },
 };
 
