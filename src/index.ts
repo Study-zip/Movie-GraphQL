@@ -22,7 +22,8 @@ const typeDefs = ` #graphql
       deleteTweet(id:ID!): Boolean!
     }
 `;
-let allTweets = [
+
+let tweets = [
   {
     id: "1",
     text: "아 심심하다",
@@ -35,24 +36,26 @@ let allTweets = [
 
 const resolvers = {
   Query: {
-    allTweets: () => allTweets,
+    allTweets: () => tweets,
     tweet(root, { id }) {
-      return allTweets.find((tweet) => tweet.id === id);
+      return tweets.find((tweet) => tweet.id === id);
     },
+    allUsers: () => users,
   },
+
   Mutation: {
     postTweet(_, { text, userId }) {
       const newTweet = {
-        id: String(allTweets.length + 1),
+        id: String(tweets.length + 1),
         text,
       };
-      allTweets.push(newTweet);
+      tweets.push(newTweet);
       return newTweet;
     },
     deleteTweet(_, { id }) {
-      const tweet = allTweets.find((tweet) => tweet.id === id);
+      const tweet = tweets.find((tweet) => tweet.id === id);
       if (!tweet) return false;
-      allTweets = allTweets.filter((tweet) => tweet.id !== id);
+      tweets = tweets.filter((tweet) => tweet.id !== id);
       return true;
     },
   },
