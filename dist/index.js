@@ -3,9 +3,9 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 const typeDefs = ` #graphql
     type User {
         id: ID
-        username: String!
         firstName: String!
-        lastName: String
+        lastName: String!
+        fullName: String!
     }
     type Tweet {
         id: ID
@@ -13,6 +13,7 @@ const typeDefs = ` #graphql
         author: User
     }
     type Query {
+        allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
     }
@@ -21,7 +22,7 @@ const typeDefs = ` #graphql
       deleteTweet(id:ID!): Boolean!
     }
 `;
-let allTweets = [
+let tweets = [
     {
         id: "1",
         text: "아 심심하다",
@@ -31,28 +32,44 @@ let allTweets = [
         text: "추우니까 더 졸리네",
     },
 ];
+let users = [
+    {
+        id: "1",
+        firstName: "Nam",
+        lastName: "Huijeong",
+    },
+];
 const resolvers = {
     Query: {
-        allTweets: () => allTweets,
+        allTweets: () => tweets,
         tweet(root, { id }) {
-            return allTweets.find((tweet) => tweet.id === id);
+            return tweets.find((tweet) => tweet.id === id);
+        },
+        allUsers: () => {
+            console.log("allUsers called");
+            return users;
         },
     },
     Mutation: {
         postTweet(_, { text, userId }) {
             const newTweet = {
-                id: String(allTweets.length + 1),
+                id: String(tweets.length + 1),
                 text,
             };
-            allTweets.push(newTweet);
+            tweets.push(newTweet);
             return newTweet;
         },
         deleteTweet(_, { id }) {
-            const tweet = allTweets.find((tweet) => tweet.id === id);
+            const tweet = tweets.find((tweet) => tweet.id === id);
             if (!tweet)
                 return false;
-            allTweets = allTweets.filter((tweet) => tweet.id !== id);
+            tweets = tweets.filter((tweet) => tweet.id !== id);
             return true;
+        },
+    },
+    User: {
+        fullName({ firstName, lastName }) {
+            return `${firstName} ${lastName}`;
         },
     },
 };

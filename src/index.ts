@@ -4,9 +4,9 @@ import { startStandaloneServer } from "@apollo/server/standalone";
 const typeDefs = ` #graphql
     type User {
         id: ID
-        username: String!
         firstName: String!
-        lastName: String
+        lastName: String!
+        fullName: String!
     }
     type Tweet {
         id: ID
@@ -14,6 +14,7 @@ const typeDefs = ` #graphql
         author: User
     }
     type Query {
+        allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
     }
@@ -34,13 +35,24 @@ let tweets = [
   },
 ];
 
+let users = [
+  {
+    id: "1",
+    firstName: "Nam",
+    lastName: "Huijeong",
+  },
+];
+
 const resolvers = {
   Query: {
     allTweets: () => tweets,
     tweet(root, { id }) {
       return tweets.find((tweet) => tweet.id === id);
     },
-    allUsers: () => users,
+    allUsers: () => {
+      console.log("allUsers called");
+      return users;
+    },
   },
 
   Mutation: {
@@ -57,6 +69,11 @@ const resolvers = {
       if (!tweet) return false;
       tweets = tweets.filter((tweet) => tweet.id !== id);
       return true;
+    },
+  },
+  User: {
+    fullName({ firstName, lastName }) {
+      return `${firstName} ${lastName}`;
     },
   },
 };
