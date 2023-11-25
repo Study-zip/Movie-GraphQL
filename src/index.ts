@@ -22,7 +22,7 @@ const typeDefs = ` #graphql
       deleteTweet(id:ID!): Boolean!
     }
 `;
-const allTweets = [
+let allTweets = [
   {
     id: "1",
     text: "아 심심하다",
@@ -48,6 +48,12 @@ const resolvers = {
       };
       allTweets.push(newTweet);
       return newTweet;
+    },
+    deleteTweet(_, { id }) {
+      const tweet = allTweets.find((tweet) => tweet.id === id);
+      if (!tweet) return false;
+      allTweets = allTweets.filter((tweet) => tweet.id !== id);
+      return true;
     },
   },
 };
