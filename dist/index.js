@@ -12,38 +12,39 @@ const typeDefs = ` #graphql
     }
     type Query {
         allTweets: [Tweet]
-        tweet(id: ID): Tweet
+        tweet(id: ID!): Tweet
     }
     type Mutation {
       postTweet(text: String, userId: ID): Tweet
+      deleteTweet(id:ID): Boolean
     }
 `;
 const allTweets = [
-  {
-    id: "qwer123",
-    text: "아 심심하다",
-  },
-  {
-    id: "min5950",
-    text: "추우니까 더 졸리네",
-  },
+    {
+        id: "qwer123",
+        text: "아 심심하다",
+    },
+    {
+        id: "min5950",
+        text: "추우니까 더 졸리네",
+    },
 ];
 const resolvers = {
-  Query: {
-    allTweets: () => allTweets,
-  },
+    Query: {
+        allTweets: () => allTweets,
+    },
 };
 // The ApolloServer constructor requires two parameters: your schema
 // definition and your set of resolvers.
 const server = new ApolloServer({
-  typeDefs,
-  resolvers,
+    typeDefs,
+    resolvers,
 });
 // Passing an ApolloServer instance to the `startStandaloneServer` function:
 //  1. creates an Express app
 //  2. installs your ApolloServer instance as middleware
 //  3. prepares your app to handle incoming requests
 const { url } = await startStandaloneServer(server, {
-  listen: { port: 4000 },
+    listen: { port: 4000 },
 });
 console.log(`🚀  Server ready at: ${url}`);
