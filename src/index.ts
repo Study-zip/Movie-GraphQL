@@ -28,18 +28,25 @@ let tweets = [
   {
     id: "1",
     text: "아 심심하다",
+    userId: "nami1234",
   },
   {
     id: "2",
     text: "추우니까 더 졸리네",
+    userId: "dogycoin00",
   },
 ];
 
 let users = [
   {
-    id: "1",
+    id: "nami1234",
     firstName: "Nam",
     lastName: "Huijeong",
+  },
+  {
+    id: "dogycoin00",
+    firstName: "Elon",
+    lastName: "Musk",
   },
 ];
 
@@ -60,7 +67,10 @@ const resolvers = {
       const newTweet = {
         id: String(tweets.length + 1),
         text,
+        userId,
       };
+      const user = users.find((user) => user.id === userId);
+      if (!user) throw new Error(`User ID ${userId} is not found.`);
       tweets.push(newTweet);
       return newTweet;
     },
@@ -74,6 +84,11 @@ const resolvers = {
   User: {
     fullName({ firstName, lastName }) {
       return `${firstName} ${lastName}`;
+    },
+  },
+  Tweet: {
+    author({ userId }) {
+      return users.find((user) => user.id === userId);
     },
   },
 };
