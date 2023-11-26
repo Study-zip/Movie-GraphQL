@@ -24,6 +24,7 @@ const typeDefs = ` #graphql
         allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
+        movie(id: String!): Movie
     }
     type Mutation {
       postTweet(text: String!, userId: ID!): Tweet
@@ -105,6 +106,26 @@ const resolvers = {
           throw new Error("Invalid response format");
         }
         return json.data.movies;
+      } catch (error) {
+        console.error("Error fetching movies:", error);
+        throw error;
+      }
+    },
+    async movie(_, { id }) {
+      try {
+        const r = await fetch(
+          `https://yts.mx/api/v2/movie_details.json?movie_id=${id}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const json: any = await r.json();
+        if (!json || !json.data || !json.data.movie) {
+          throw new Error("Invalid response format");
+        }
+        return json.data.movie;
       } catch (error) {
         console.error("Error fetching movies:", error);
         throw error;
