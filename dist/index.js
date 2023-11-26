@@ -19,6 +19,7 @@ const typeDefs = ` #graphql
         author: User
     }
     type Query {
+        allMovies: [Movie!]!
         allUsers: [User!]!
         allTweets: [Tweet!]!
         tweet(id: ID!): Tweet
@@ -30,6 +31,29 @@ const typeDefs = ` #graphql
       """
       deleteTweet(id:ID!): Boolean!
     }
+    type Movie {
+      id: Int!
+      url: String!
+      imdb_code: String!
+      title: String!
+      title_english: String!
+      title_long: String!
+      slug: String!
+      year: Int!
+      rating: Float!
+      runtime: Float!
+      genres: [String]!
+      summary: String
+      description_full: String!
+      synopsis: String
+      yt_trailer_code: String!
+      language: String!
+      background_image: String!
+      background_image_original: String!
+      small_cover_image: String!
+      medium_cover_image: String!
+      large_cover_image: String!
+      }
 `;
 let tweets = [
     {
@@ -64,6 +88,24 @@ const resolvers = {
         allUsers: () => {
             console.log("allUsers called");
             return users;
+        },
+        async allMovies() {
+            try {
+                const r = await fetch("https://yts.mx/api/v2/list_movies.json", {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                });
+                const json = await r.json();
+                if (!json || !json.data || !json.data.movies) {
+                    throw new Error("Invalid response format");
+                }
+                return json.data.movies;
+            }
+            catch (error) {
+                console.error("Error fetching movies:", error);
+                throw error;
+            }
         },
     },
     Mutation: {
